@@ -2,572 +2,378 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1020">
-  <title>Nasri — اختصار الروابط</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --panel: #141c30;
-      --field: #0d1426;
-      --line: #2b3650;
-      --text: #f4f7ff;
-      --muted: #9caac4;
-      --purple: #8272ff;
-      --blue: #43b5ff;
-      --green: #72e6b0;
-      --red: #ff929e;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Nasri | اختصار الروابط</title>
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      padding: 28px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text);
-      background:
-        radial-gradient(ellipse at 15% 5%, #5746a52c, transparent 40%),
-        radial-gradient(ellipse at 90% 90%, #087fbd20, transparent 35%),
-        var(--bg);
-      font-family: system-ui, Tahoma, Arial, sans-serif;
-    }
-
-    button, input { font: inherit; }
-
-    .app {
-      width: 100%;
-      max-width: 490px;
-    }
-
-    .hero { text-align: center; margin-bottom: 25px; }
-
-    .logo {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 15px;
-      display: grid;
-      place-items: center;
-      border-radius: 23px;
-      font-size: 32px;
-      font-weight: 900;
-      background: linear-gradient(140deg, var(--purple), var(--blue));
-      box-shadow: 0 12px 40px #6156ee40;
-    }
-
-    h1 { margin: 0; font-size: 32px; letter-spacing: -.5px; }
-
-    .tagline {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.9;
-      margin: 9px 0 0;
-    }
-
-    .panel {
-      padding: 23px;
-      border: 1px solid #ffffff12;
-      border-radius: 23px;
-      background: linear-gradient(155deg, #19233a, var(--panel));
-      box-shadow: 0 25px 80px #0005;
-    }
-
-    .section-title {
-      margin: 0 0 17px;
-      font-size: 16px;
-      font-weight: 750;
-    }
-
-    .field-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin: 18px 0 9px;
-    }
-
-    input[type="url"], input[type="text"] {
-      width: 100%;
-      padding: 14px;
-      color: var(--text);
-      background: var(--field);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      outline: none;
-      direction: ltr;
-      text-align: left;
-      font-size: 14px;
-      transition: border .2s, box-shadow .2s;
-    }
-
-    input:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px #8272ff20;
-    }
-
-    input::placeholder { color: #667590; }
-
-    .modes {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 13px 0 19px;
-    }
-
-    .mode {
-      position: relative;
-      cursor: pointer;
-    }
-
-    .mode input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .mode-card {
-      min-height: 100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 7px;
-      padding: 12px 7px;
-      background: var(--field);
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      transition: .2s;
-    }
-
-    .mode input:checked + .mode-card {
-      border-color: var(--purple);
-      background: #8272ff16;
-      box-shadow: inset 0 0 0 1px #8272ff30;
-    }
-
-    .mode input:focus-visible + .mode-card {
-      outline: 2px solid var(--blue);
-      outline-offset: 3px;
-    }
-
-    .mode-icon { font-size: 23px; }
-
-    .mode-name { font-size: 14px; font-weight: 800; }
-
-    .mode-desc { color: var(--muted); font-size: 11px; }
-
-    .hint {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.9;
-      margin: 9px 0 0;
-    }
-
-    .custom-box { display: none; }
-    .custom-box.visible { display: block; }
-
-    .primary {
-      width: 100%;
-      min-height: 51px;
-      margin-top: 22px;
-      border: 0;
-      border-radius: 13px;
-      color: white;
-      font-weight: 800;
-      cursor: pointer;
-      background: linear-gradient(110deg, #7867ff, #358fff);
-      box-shadow: 0 8px 25px #5365ff30;
-      transition: opacity .2s, transform .2s;
-    }
-
-    .primary:active { transform: scale(.99); }
-    button:disabled { opacity: .55; cursor: wait; }
-
-    .status {
-      display: none;
-      padding: 13px;
-      margin-top: 16px;
-      border-radius: 12px;
-      font-size: 13px;
-      line-height: 1.9;
-      overflow-wrap: anywhere;
-    }
-
-    .status.visible { display: block; }
-    .status.info { color: #c7d8ff; background: #4a72c51a; border: 1px solid #496ab044; }
-    .status.success { color: var(--green); background: #1d9a6014; border: 1px solid #38bb8040; }
-    .status.error { color: var(--red); background: #ff536814; border: 1px solid #ff53683d; }
-
-    .result {
-      display: none;
-      margin-top: 18px;
-      padding: 17px;
-      border: 1px solid #36b98150;
-      border-radius: 16px;
-      background: #0b1820;
-    }
-
-    .result.visible { display: block; }
-
-    .result-heading {
-      font-size: 13px;
-      color: var(--green);
-      font-weight: 800;
-      margin-bottom: 11px;
-    }
-
-    .short-link {
-      display: block;
-      color: #9fc6ff;
-      font-size: 17px;
-      line-height: 1.9;
-      text-align: center;
-      direction: ltr;
-      overflow-wrap: anywhere;
-      text-decoration: none;
-    }
-
-    .short-link:hover { text-decoration: underline; }
-
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 9px;
-      margin-top: 15px;
-    }
-
-    .secondary {
-      padding: 12px 8px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: #202c43;
-      color: var(--text);
-      text-align: center;
-      font-size: 13px;
-      font-weight: 750;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .secondary:hover { background: #2a3955; }
-
-    .footer {
-      margin-top: 19px;
-      text-align: center;
-      color: #75829b;
-      font-size: 11px;
-      line-height: 2;
-    }
-
-    @media (max-width: 360px) {
-      .panel { padding: 17px; }
-      .modes { gap: 7px; }
-      .mode-desc { font-size: 10px; }
-    }
-  </style>
+<style>
+:root {
+  --bg:#0b1020;
+  --panel:#151e32;
+  --field:#0d1426;
+  --line:#2c3954;
+  --text:#f4f7ff;
+  --muted:#9baac4;
+  --purple:#8572ff;
+  --blue:#38a5ff;
+  --green:#73e6b1;
+  --red:#ff929e;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  min-height:100vh;
+  padding:25px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 10% 5%,#6650d82a,transparent 42%),
+    radial-gradient(ellipse at 95% 90%,#078ac51e,transparent 35%),
+    var(--bg);
+  font-family:system-ui,Tahoma,Arial,sans-serif;
+}
+button,input { font:inherit; }
+.app { width:100%; max-width:490px; }
+.hero { text-align:center; margin-bottom:25px; }
+.logo {
+  width:70px;height:70px;margin:0 auto 14px;
+  display:grid;place-items:center;border-radius:23px;
+  background:linear-gradient(140deg,var(--purple),var(--blue));
+  font-size:32px;font-weight:900;
+  box-shadow:0 12px 40px #6156ee40;
+}
+h1 { margin:0;font-size:32px; }
+.tagline {
+  color:var(--muted);font-size:14px;line-height:1.9;
+  margin:8px 0 0;
+}
+.panel {
+  padding:23px;border:1px solid #ffffff13;border-radius:23px;
+  background:linear-gradient(150deg,#1b2741,var(--panel));
+  box-shadow:0 25px 80px #0005;
+}
+.heading { margin:0 0 19px;font-size:17px; }
+.label {
+  display:block;font-size:13px;font-weight:750;
+  margin:18px 0 9px;
+}
+input[type="url"],input[type="text"] {
+  width:100%;padding:14px;color:var(--text);
+  background:var(--field);border:1px solid var(--line);
+  border-radius:12px;outline:none;direction:ltr;text-align:left;
+  font-size:14px;
+}
+input:focus {
+  border-color:var(--purple);
+  box-shadow:0 0 0 3px #8272ff20;
+}
+input::placeholder { color:#71809b; }
+.modes {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin:13px 0 18px;
+}
+.mode { position:relative;cursor:pointer; }
+.mode input {
+  position:absolute;opacity:0;pointer-events:none;
+}
+.mode-card {
+  min-height:105px;padding:12px 6px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:7px;text-align:center;
+  background:var(--field);border:1px solid var(--line);
+  border-radius:15px;transition:.2s;
+}
+.mode input:checked + .mode-card {
+  border-color:var(--purple);background:#8272ff18;
+  box-shadow:inset 0 0 0 1px #8272ff35;
+}
+.mode input:focus-visible + .mode-card {
+  outline:2px solid var(--blue);outline-offset:3px;
+}
+.mode-icon { font-size:24px; }
+.mode-name { font-size:14px;font-weight:800; }
+.mode-desc { color:var(--muted);font-size:11px; }
+.hint { color:var(--muted);font-size:12px;line-height:1.9;margin:8px 0 0; }
+.custom-box { display:none; }
+.custom-box.visible { display:block; }
+.primary {
+  width:100%;min-height:51px;margin-top:22px;padding:13px;
+  border:0;border-radius:13px;color:white;font-weight:800;
+  cursor:pointer;background:linear-gradient(110deg,#7867ff,#358fff);
+  box-shadow:0 8px 25px #5365ff30;
+}
+button:disabled { opacity:.55;cursor:wait; }
+.status {
+  display:none;padding:13px;margin-top:16px;border-radius:12px;
+  font-size:13px;line-height:1.9;overflow-wrap:anywhere;
+}
+.status.visible { display:block; }
+.status.info { color:#c7d8ff;background:#4a72c51a;border:1px solid #496ab044; }
+.status.success { color:var(--green);background:#1d9a6014;border:1px solid #38bb8040; }
+.status.error { color:var(--red);background:#ff536814;border:1px solid #ff53683d; }
+.result {
+  display:none;margin-top:18px;padding:17px;
+  border:1px solid #36b98150;border-radius:16px;background:#0b1820;
+}
+.result.visible { display:block; }
+.result-heading { color:var(--green);font-size:13px;font-weight:800;margin-bottom:11px; }
+.short-link {
+  display:block;color:#9fc6ff;font-size:17px;line-height:1.9;
+  text-align:center;direction:ltr;overflow-wrap:anywhere;text-decoration:none;
+}
+.actions { display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px; }
+.secondary {
+  padding:12px 8px;border:1px solid var(--line);border-radius:11px;
+  background:#202c43;color:var(--text);text-align:center;
+  font-size:13px;font-weight:750;text-decoration:none;cursor:pointer;
+}
+.footer { margin-top:19px;text-align:center;color:#75829b;font-size:11px;line-height:2; }
+@media(max-width:360px) {
+  .panel { padding:17px; }
+  .modes { gap:7px; }
+}
+</style>
 </head>
 
 <body>
-  <main class="app">
-    <header class="hero">
-      <div class="logo">N</div>
-      <h1>Nasri</h1>
-      <p class="tagline">
-        روابط طويلة؟ اختصرها في ثوانٍ.<br>
-        بسيطة، سريعة، ومصممة لك.
-      </p>
-    </header>
+<main class="app">
+  <header class="hero">
+    <div class="logo">N</div>
+    <h1>Nasri</h1>
+    <p class="tagline">
+      روابطك الطويلة أصبحت أقصر.<br>
+      اختر اسمك أو دعنا نختار لك اسمًا تلقائيًا.
+    </p>
+  </header>
 
-    <section class="panel">
-      <h2 class="section-title">✨ أنشئ رابطك المختصر</h2>
+  <section class="panel">
+    <h2 class="heading">✨ إنشاء رابط مختصر</h2>
 
-      <form id="form">
-        <label class="field-label" for="url">الرابط الأصلي</label>
-        <input
-          id="url"
-          type="url"
-          placeholder="https://example.com/your-long-link"
-          autocomplete="url"
-          required
-        >
+    <form id="form">
+      <label class="label" for="url">الرابط الأصلي</label>
+      <input
+        id="url"
+        type="url"
+        placeholder="https://example.com/your-link"
+        autocomplete="url"
+        required
+      >
 
-        <div class="field-label">اختر طريقة إنشاء الرابط</div>
+      <div class="label">طريقة الاختصار</div>
 
-        <div class="modes">
-          <label class="mode">
-            <input type="radio" name="mode" value="random" checked>
-            <span class="mode-card">
-              <span class="mode-icon">🎲</span>
-              <span class="mode-name">اسم عشوائي</span>
-              <span class="mode-desc">الخدمة تختار الاسم</span>
-            </span>
-          </label>
+      <div class="modes">
+        <label class="mode">
+          <input type="radio" name="mode" value="random" checked>
+          <span class="mode-card">
+            <span class="mode-icon">🎲</span>
+            <span class="mode-name">اسم عشوائي</span>
+            <span class="mode-desc">اسم تختاره الخدمة</span>
+          </span>
+        </label>
 
-          <label class="mode">
-            <input type="radio" name="mode" value="custom">
-            <span class="mode-card">
-              <span class="mode-icon">✍️</span>
-              <span class="mode-name">اسم مخصص</span>
-              <span class="mode-desc">اختر الكلمة بنفسك</span>
-            </span>
-          </label>
-        </div>
-
-        <div id="customBox" class="custom-box">
-          <label class="field-label" for="alias">الكلمة التي تريدها</label>
-          <input
-            id="alias"
-            type="text"
-            placeholder="nasri2026"
-            minlength="5"
-            maxlength="30"
-            pattern="[A-Za-z0-9_]{5,30}"
-            autocomplete="off"
-          >
-          <p class="hint">
-            من 5 إلى 30 حرفًا إنجليزيًا أو رقمًا أو _.
-            يجب أن تكون الكلمة متاحة.
-          </p>
-        </div>
-
-        <button class="primary" id="submit" type="submit">
-          ✨ إنشاء الرابط المختصر
-        </button>
-      </form>
-
-      <div id="status" class="status" role="status" aria-live="polite"></div>
-
-      <div id="result" class="result">
-        <div class="result-heading">✓ تم إنشاء الرابط</div>
-        <a
-          id="shortLink"
-          class="short-link"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        ></a>
-        <div class="actions">
-          <button id="copy" class="secondary" type="button">📋 نسخ الرابط</button>
-          <a id="openLink" class="secondary" href="#" target="_blank" rel="noopener noreferrer">
-            ↗ فتح الرابط
-          </a>
-        </div>
+        <label class="mode">
+          <input type="radio" name="mode" value="custom">
+          <span class="mode-card">
+            <span class="mode-icon">✍️</span>
+            <span class="mode-name">اسم مخصص</span>
+            <span class="mode-desc">كلمة تختارها بنفسك</span>
+          </span>
+        </label>
       </div>
-    </section>
 
-    <footer class="footer">
-      Nasri Link Shortener<br>
-      يتم إنشاء الروابط عبر خدمة خارجية، وقد تخضع لقيودها.
-    </footer>
-  </main>
+      <div id="customBox" class="custom-box">
+        <label class="label" for="alias">الاسم الذي تريده</label>
+        <input
+          id="alias"
+          type="text"
+          placeholder="nasri2026"
+          minlength="5"
+          maxlength="16"
+          pattern="[A-Za-z0-9-]{5,16}"
+          autocomplete="off"
+        >
+        <p class="hint">
+          من 5 إلى 16 حرفًا إنجليزيًا أو رقمًا أو شرطة -.
+          يجب أن يكون الاسم متاحًا.
+        </p>
+      </div>
 
-  <script>
-    (() => {
-      const form = document.getElementById('form');
-      const urlInput = document.getElementById('url');
-      const aliasInput = document.getElementById('alias');
-      const customBox = document.getElementById('customBox');
-      const submit = document.getElementById('submit');
-      const status = document.getElementById('status');
-      const result = document.getElementById('result');
-      const shortLink = document.getElementById('shortLink');
-      const openLink = document.getElementById('openLink');
-      const copy = document.getElementById('copy');
+      <button id="submit" class="primary" type="submit">
+        ✨ إنشاء الرابط المختصر
+      </button>
+    </form>
 
-      let currentScript = null;
-      let timer = null;
-      let callbackKey = null;
-      let requestId = 0;
+    <div id="status" class="status" role="status" aria-live="polite"></div>
 
-      function setStatus(message, type) {
-        status.textContent = message;
-        status.className = 'status visible ' + type;
+    <div id="result" class="result">
+      <div class="result-heading">✓ رابطك المختصر جاهز</div>
+      <a id="shortLink" class="short-link" href="#"
+         target="_blank" rel="noopener noreferrer"></a>
+      <div class="actions">
+        <button id="copy" class="secondary" type="button">📋 نسخ الرابط</button>
+        <a id="openLink" class="secondary" href="#"
+           target="_blank" rel="noopener noreferrer">↗ فتح الرابط</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Nasri Link Shortener<br>
+    تعتمد عملية إنشاء الروابط على خدمة خارجية.
+  </footer>
+</main>
+
+<script>
+(() => {
+  const form = document.getElementById('form');
+  const urlInput = document.getElementById('url');
+  const aliasInput = document.getElementById('alias');
+  const customBox = document.getElementById('customBox');
+  const submit = document.getElementById('submit');
+  const statusBox = document.getElementById('status');
+  const result = document.getElementById('result');
+  const shortLink = document.getElementById('shortLink');
+  const openLink = document.getElementById('openLink');
+  const copy = document.getElementById('copy');
+
+  function showStatus(message, type) {
+    statusBox.textContent = message;
+    statusBox.className = 'status visible ' + type;
+  }
+
+  function selectedMode() {
+    return form.querySelector('input[name="mode"]:checked').value;
+  }
+
+  function updateMode() {
+    const custom = selectedMode() === 'custom';
+    customBox.classList.toggle('visible', custom);
+    aliasInput.required = custom;
+    aliasInput.disabled = !custom;
+  }
+
+  form.querySelectorAll('input[name="mode"]').forEach(radio => {
+    radio.addEventListener('change', updateMode);
+  });
+  updateMode();
+
+  aliasInput.addEventListener('input', () => {
+    aliasInput.value = aliasInput.value.replace(/[^A-Za-z0-9-]/g, '');
+  });
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const url = urlInput.value.trim();
+    const mode = selectedMode();
+    const alias = aliasInput.value.trim();
+
+    try {
+      const parsed = new URL(url);
+      if (!['http:', 'https:'].includes(parsed.protocol)) {
+        throw new Error('invalid-url');
       }
+    } catch (_) {
+      showStatus('أدخل رابطًا صحيحًا يبدأ بـ https:// أو http://', 'error');
+      return;
+    }
 
-      function cleanup() {
-        if (timer !== null) {
-          clearTimeout(timer);
-          timer = null;
-        }
+    if (mode === 'custom' && !/^[A-Za-z0-9](?:[A-Za-z0-9-]{3,14})[A-Za-z0-9]$/.test(alias)) {
+      showStatus('الاسم يجب أن يكون من 5 إلى 16 حرفًا أو رقمًا أو شرطة، وألا يبدأ أو ينتهي بشرطة.', 'error');
+      return;
+    }
 
-        if (currentScript) {
-          currentScript.remove();
-          currentScript = null;
-        }
+    submit.disabled = true;
+    submit.textContent = '⏳ جارٍ إنشاء الرابط...';
+    result.classList.remove('visible');
+    showStatus('جارٍ الاتصال بخدمة الاختصار...', 'info');
 
-        if (callbackKey) {
-          try {
-            delete window[callbackKey];
-          } catch (_) {
-            window[callbackKey] = undefined;
-          }
-          callbackKey = null;
-        }
-      }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
 
-      function finish() {
-        cleanup();
-        submit.disabled = false;
-        submit.textContent = '✨ إنشاء الرابط المختصر';
-      }
+    try {
+      const body = { url };
+      if (mode === 'custom') body.alias = alias;
 
-      function getMode() {
-        return form.querySelector('input[name="mode"]:checked').value;
-      }
-
-      function updateMode() {
-        const custom = getMode() === 'custom';
-        customBox.classList.toggle('visible', custom);
-        aliasInput.required = custom;
-        aliasInput.disabled = !custom;
-      }
-
-      form.querySelectorAll('input[name="mode"]').forEach((radio) => {
-        radio.addEventListener('change', updateMode);
+      const response = await fetch('https://shrtr.top/api/v1/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
       });
 
-      updateMode();
+      const data = await response.json().catch(() => ({}));
 
-      aliasInput.addEventListener('input', () => {
-        aliasInput.value = aliasInput.value.replace(/[^A-Za-z0-9_]/g, '');
-      });
-
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-
-        const url = urlInput.value.trim();
-        const mode = getMode();
-        const alias = aliasInput.value.trim();
-
-        let parsedUrl;
-        try {
-          parsedUrl = new URL(url);
-        } catch (_) {
-          setStatus('يرجى إدخال رابط صحيح.', 'error');
-          return;
+      if (!response.ok) {
+        if (response.status === 409) {
+          throw new Error('هذا الاسم مستخدم بالفعل. اختر اسمًا آخر.');
         }
 
-        if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-          setStatus('يجب أن يبدأ الرابط بـ https:// أو http://', 'error');
-          return;
+        if (response.status === 422) {
+          throw new Error(data.detail || 'الرابط أو الاسم غير مقبول من الخدمة.');
         }
 
-        if (mode === 'custom' && !/^[A-Za-z0-9_]{5,30}$/.test(alias)) {
-          setStatus('الكلمة المخصصة يجب أن تتكون من 5 إلى 30 حرفًا أو رقمًا أو _.', 'error');
-          return;
+        if (response.status === 429) {
+          const retry = response.headers.get('Retry-After');
+          throw new Error(
+            'وصلت إلى حد الطلبات المسموح. ' +
+            (retry ? 'انتظر ' + retry + ' ثانية ثم حاول.' : 'حاول لاحقًا.')
+          );
         }
 
-        cleanup();
-        const thisId = ++requestId;
-
-        result.classList.remove('visible');
-        setStatus(
-          mode === 'random'
-            ? 'جارٍ طلب رابط عشوائي من الخدمة...'
-            : 'جارٍ طلب الرابط بالاسم الذي اخترته...',
-          'info'
+        throw new Error(
+          data.detail || data.title || ('خطأ من الخدمة: ' + response.status)
         );
+      }
 
-        submit.disabled = true;
-        submit.textContent = '⏳ جارٍ الإنشاء...';
+      if (!data.short_url) {
+        throw new Error('لم تُرجع الخدمة رابطًا مختصرًا صالحًا.');
+      }
 
-        callbackKey = 'nasriReply_' + thisId;
+      const short = new URL(data.short_url);
 
-        window[callbackKey] = (data) => {
-          if (thisId !== requestId) return;
+      if (short.protocol !== 'https:' || short.hostname !== 'shrtr.top') {
+        throw new Error('أعادت الخدمة عنوانًا غير متوقع.');
+      }
 
-          finish();
+      shortLink.href = short.href;
+      shortLink.textContent = short.href;
+      openLink.href = short.href;
+      result.classList.add('visible');
+      showStatus('تم إنشاء الرابط بنجاح! 🎉', 'success');
 
-          if (data && data.shorturl) {
-            let short;
-            try {
-              short = new URL(data.shorturl);
-            } catch (_) {
-              setStatus('أعادت الخدمة عنوانًا غير صالح.', 'error');
-              return;
-            }
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        showStatus('انتهت مهلة الاتصال. حاول مرة أخرى لاحقًا.', 'error');
+      } else if (error instanceof TypeError) {
+        showStatus(
+          'تعذر الاتصال بالخدمة. تحقق من الإنترنت أو جرّب لاحقًا.',
+          'error'
+        );
+      } else {
+        showStatus('تعذر إنشاء الرابط: ' + error.message, 'error');
+      }
+    } finally {
+      clearTimeout(timeout);
+      submit.disabled = false;
+      submit.textContent = '✨ إنشاء الرابط المختصر';
+    }
+  });
 
-            if (short.protocol !== 'https:' || short.hostname !== 'is.gd') {
-              setStatus('أعادت الخدمة عنوانًا غير متوقع، ولم يتم عرضه.', 'error');
-              return;
-            }
+  copy.addEventListener('click', async () => {
+    if (!result.classList.contains('visible')) return;
 
-            shortLink.href = short.href;
-            shortLink.textContent = short.href;
-            openLink.href = short.href;
-            result.classList.add('visible');
-            setStatus('تم إنشاء الرابط بنجاح!', 'success');
-            return;
-          }
-
-          const code = Number(data && data.errorcode);
-          const detail = data && data.errormessage;
-
-          if (code === 1) {
-            setStatus('الرابط الأصلي غير صالح أو غير مقبول لدى الخدمة.', 'error');
-          } else if (code === 2) {
-            setStatus('الاسم المخصص مرفوض أو غير متاح. جرّب اسمًا آخر.', 'error');
-          } else if (code === 3) {
-            setStatus('تجاوزت حد الطلبات. انتظر دقيقة قبل المحاولة مجددًا.', 'error');
-          } else {
-            setStatus(
-              'الخدمة لم تنشئ الرابط' +
-              (detail ? ': ' + detail : '. قد تكون هناك مشكلة مؤقتة في الخدمة.'),
-              'error'
-            );
-          }
-        };
-
-        const params = new URLSearchParams({
-          format: 'json',
-          callback: callbackKey,
-          url: url
-        });
-
-        if (mode === 'custom') {
-          params.set('shorturl', alias);
-        }
-
-        currentScript = document.createElement('script');
-        currentScript.async = true;
-        currentScript.src = 'https://is.gd/create.php?' + params.toString();
-
-        currentScript.onerror = () => {
-          if (thisId !== requestId) return;
-          finish();
-          setStatus(
-            'تعذر الوصول إلى خدمة الاختصار. تحقق من اتصال الإنترنت أو حاول لاحقًا.',
-            'error'
-          );
-        };
-
-        document.body.appendChild(currentScript);
-
-        timer = setTimeout(() => {
-          if (thisId !== requestId) return;
-          finish();
-          setStatus(
-            'لم يصل رد صالح من is.gd خلال 25 ثانية. قد تكون الخدمة متوقفة أو تواجه مشكلة داخلية. لم يتم إنشاء رابط مؤكد.',
-            'error'
-          );
-        }, 25000);
-      });
-
-      copy.addEventListener('click', async () => {
-        if (!result.classList.contains('visible')) return;
-
-        try {
-          await navigator.clipboard.writeText(shortLink.href);
-          setStatus('تم نسخ الرابط إلى الحافظة ✓', 'success');
-        } catch (_) {
-          window.prompt('انسخ الرابط التالي:', shortLink.href);
-        }
-      });
-    })();
-  </script>
+    try {
+      await navigator.clipboard.writeText(shortLink.href);
+      showStatus('تم نسخ الرابط بنجاح ✓', 'success');
+    } catch (_) {
+      window.prompt('انسخ الرابط التالي:', shortLink.href);
+    }
+  });
+})();
+</script>
 </body>
 </html>
