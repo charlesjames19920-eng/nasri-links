@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 body{
 margin:0;font-family:Arial,sans-serif;background:#0f172a;
-color:#fff;min-height:100vh;display:grid;place-items:center;padding:20px
+color:white;min-height:100vh;display:grid;place-items:center;padding:20px
 }
 main{
 width:100%;max-width:450px;background:#1e293b;padding:28px;
@@ -17,65 +17,112 @@ border-radius:20px;box-shadow:0 15px 40px #0005
 }
 h1{text-align:center;color:#60a5fa;font-size:36px;margin:0}
 p{text-align:center;color:#cbd5e1;line-height:1.8}
-label{display:block;margin:24px 0 10px}
+label{display:block;margin:22px 0 9px}
 input{
-width:100%;padding:14px;border-radius:10px;border:1px solid #475569;
-background:#0f172a;color:white;font-size:16px;direction:ltr
+width:100%;padding:14px;border-radius:10px;
+border:1px solid #475569;background:#0f172a;
+color:white;font-size:16px;direction:ltr
 }
 button{
-width:100%;padding:14px;margin-top:14px;border:0;border-radius:10px;
-background:#2563eb;color:white;font-size:17px;font-weight:bold
+width:100%;padding:14px;margin-top:14px;border:0;
+border-radius:10px;background:#2563eb;color:white;
+font-size:16px;font-weight:bold
 }
+button:disabled{opacity:.6}
 #result{display:none;margin-top:20px;overflow-wrap:anywhere}
-#shortlink{color:#93c5fd;direction:ltr;display:block;margin-top:12px}
+#shortlink{color:#93c5fd;direction:ltr;display:block;text-align:center}
 .note{font-size:12px}
 </style>
 </head>
 <body>
 <main>
 <h1>Nasri</h1>
-<p>اختصر روابطك الطويلة بسهولة ومجانًا</p>
+<p>أنشئ رابطك المختصر واختر الكلمة بنفسك</p>
+
 <form id="form">
-<label for="url">أدخل الرابط الذي تريد اختصاره</label>
-<input id="url" type="url" placeholder="https://example.com" required>
-<button type="submit">اختصر الرابط</button>
+<label for="url">الرابط الأصلي</label>
+<input id="url" type="url"
+placeholder="https://example.com" required>
+
+<label for="alias">الكلمة التي تريدها للرابط</label>
+<input id="alias" type="text"
+placeholder="myvideo" minlength="5" maxlength="30"
+pattern="[A-Za-z0-9_]{5,30}"
+title="من 5 إلى 30 حرفًا أو رقمًا أو شرطة سفلية _"
+required>
+
+<p class="note">
+من 5 إلى 30 حرفًا أو رقمًا أو _ فقط.
+يجب أن تكون الكلمة غير محجوزة.
+</p>
+
+<button id="submit" type="submit">إنشاء الرابط المختصر</button>
 </form>
+
 <div id="result">
 <p>رابطك المختصر:</p>
 <a id="shortlink" target="_blank" rel="noopener"></a>
 <button id="copy" type="button">نسخ الرابط</button>
 </div>
-<p class="note">خدمة اختصار مجانية عبر is.gd</p>
+
+<p id="status" role="status" aria-live="polite"></p>
+<p class="note">بواسطة خدمة is.gd المجانية</p>
 </main>
+
 <script>
 const form=document.getElementById('form');
+const status=document.getElementById('status');
 const result=document.getElementById('result');
 const link=document.getElementById('shortlink');
-form.addEventListener('submit',async function(e){
+const button=document.getElementById('submit');
+
+form.addEventListener('submit',async e=>{
 e.preventDefault();
+result.style.display='none';
+status.textContent='';
+
 const url=document.getElementById('url').value.trim();
+const alias=document.getElementById('alias').value.trim();
+
 if(!/^https?:\/\//i.test(url)){
-alert('أدخل رابطًا يبدأ بـ https:// أو http://');return;
+status.textContent='أدخل رابطًا يبدأ بـ https:// أو http://';
+return;
 }
-const button=form.querySelector('button');
-button.disabled=true;button.textContent='جارٍ الاختصار...';
+if(!/^[A-Za-z0-9_]{5,30}$/.test(alias)){
+status.textContent='الكلمة يجب أن تكون 5 إلى 30 حرفًا أو رقمًا أو _';
+return;
+}
+
+button.disabled=true;
+button.textContent='جارٍ إنشاء الرابط...';
+
 try{
-const api='https://is.gd/create.php?format=json&url='+encodeURIComponent(url);
+const api='https://is.gd/create.php?format=json&url='
++encodeURIComponent(url)+'&shorturl='+encodeURIComponent(alias);
+
 const response=await fetch(api);
 const data=await response.json();
-if(!data.shorturl)throw new Error(data.errormessage||'تعذر إنشاء الرابط');
-link.href=data.shorturl;link.textContent=data.shorturl;
+
+if(!response.ok||!data.shorturl){
+throw new Error(data.errormessage||'الكلمة محجوزة أو تعذر إنشاء الرابط');
+}
+
+link.href=data.shorturl;
+link.textContent=data.shorturl;
 result.style.display='block';
+status.textContent='تم إنشاء الرابط بنجاح.';
 }catch(err){
-alert('تعذر الاختصار. حاول مرة أخرى أو تحقق من اتصال الإنترنت.');
+status.textContent='لم ينجح الإنشاء. قد تكون الكلمة محجوزة؛ جرّب كلمة أخرى.';
 }finally{
-button.disabled=false;button.textContent='اختصر الرابط';
+button.disabled=false;
+button.textContent='إنشاء الرابط المختصر';
 }
 });
+
 document.getElementById('copy').addEventListener('click',async()=>{
 try{
 await navigator.clipboard.writeText(link.href);
-alert('تم نسخ الرابط');
+status.textContent='تم نسخ الرابط.';
 }catch(e){
 prompt('انسخ الرابط:',link.href);
 }
